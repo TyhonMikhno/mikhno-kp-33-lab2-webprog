@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${order.id != null} ? 'Редагування замовлення' : 'Створення замовлення'">Замовлення</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Comic Neue', cursive, sans-serif;
+            background-color: #f4f0fa;
+            color: #3c2a4d;
+            padding: 2em;
+            max-width: 600px;
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-top: 1em;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.5em;
+            margin-top: 0.25em;
+            border: 1px solid #d3cce3;
+            border-radius: 4px;
+            background-color: #faf7ff;
+            color: #3c2a4d;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #a982dd;
+        }
+        button {
+            margin-top: 1.5em;
+            padding: 0.7em 1.5em;
+            background-color: #b39ddb;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 6px;
+        }
+        button:hover {
+            background-color: #9575cd;
+        }
+        .error {
+            color: #d81b60;
+            font-size: 0.85em;
+        }
+        a {
+            display: inline-block;
+            margin-top: 1em;
+            color: #7e57c2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${order.id != null} ? 'Редагувати замовлення' : 'Створити замовлення'"></h1>
+
+<form th:action="@{/orders}" th:object="${order}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+
+    <label>Ім'я клієнта:
+        <input type="text" th:field="*{customerName}" required/>
+        <div th:if="${#fields.hasErrors('customerName')}" th:errors="*{customerName}" class="error"></div>
+    </label>
+
+    <label>Кількість:
+        <input type="number" th:field="*{quantity}" min="1" required/>
+        <div th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" class="error"></div>
+    </label>
+
+    <label>Піца:
+        <select th:field="*{pizza}" required>
+            <option value="">Оберіть піцу</option>
+            <option th:each="pizza : ${pizzas}"
+                    th:value="${pizza.id}"
+                    th:text="${pizza.name + ' — ' + pizza.size + ' (' + pizza.price + ' грн)'}"
+                    th:selected="${pizza.id} == ${order.pizza?.id}">
+            </option>
+        </select>
+        <div th:if="${#fields.hasErrors('pizza')}" th:errors="*{pizza}" class="error"></div>
+    </label>
+
+    <label>Піцерія:
+        <select th:field="*{pizzeria}" required>
+            <option value="">Оберіть піцерію</option>
+            <option th:each="pizzeria : ${pizzerias}"
+                    th:value="${pizzeria.id}"
+                    th:text="${pizzeria.name + ' — ' + pizzeria.address}"
+                    th:selected="${pizzeria.id} == ${order.pizzeria?.id}">
+            </option>
+        </select>
+        <div th:if="${#fields.hasErrors('pizzeria')}" th:errors="*{pizzeria}" class="error"></div>
+    </label>
+
+    <button type="submit">Зберегти</button>
+    <a th:href="@{/orders}">← Назад до списку</a>
+</form>
+
+</body>
+</html>
